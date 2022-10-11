@@ -90,9 +90,10 @@ select_feature <- function(data,label,nf=2000){
 #' This function takes pseudo-spatail and real-spatial data to identify variable genes
 data_process <- function(st_count,st_label,anova){
     if (anova){
-        sel.features <- select_feature(st_count[[1]],st_label[[1]])
-        st_count_new <- list(st_count[[1]][sel.features,],st_count[[2]][sel.features,])
-
+        
+		sel.features <- select_feature(st_count[[1]],st_label[[1]])
+        sel.features.nona <- sel.features[!is.na(sel.features)]
+		st_count_new <- list(st_count[[1]][sel.features.nona,],st_count[[2]][sel.features.nona,])
         colnames(st_label[[1]]) <- 'subclass'
         tem.t1 <- Seurat::CreateSeuratObject(counts = st_count_new[[1]],meta.data=st_label[[1]]);
         Seurat::Idents(object = tem.t1) <- tem.t1@meta.data$subclass
@@ -151,6 +152,7 @@ Convert_Data <- function(count.list,label.list,anova=TRUE){
         write.csv(st.scale[[i]],file=paste0(inforDir,'/ST_scale/ST_scale_',i,'.csv'),quote=F)
     }
 }
+
 
 
 
@@ -226,5 +228,4 @@ test_spot_fun = function (se_obj, clust_vr, n = 1000, verbose = TRUE){
   print("output consists of a list with two dataframes, this first one has the weighted count matrix and the second has the metadata for each spot")
   return(list(topic_profiles = ds_syn_spots, cell_composition = ds_spots_metadata))
 }
-
 

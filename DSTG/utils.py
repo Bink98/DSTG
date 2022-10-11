@@ -28,9 +28,9 @@ def load_data(datadir):
     labels_val = np.array(label_val1)
 
     #' convert pandas data frame to csr_matrix format
-    datas_tr = scipy.sparse.csr_matrix(datas_train.astype('Float64'))
-    datas_va = scipy.sparse.csr_matrix(datas_val.astype('Float64'))
-    datas_te = scipy.sparse.csr_matrix(datas_test.astype('Float64'))
+    datas_tr = scipy.sparse.csr_matrix(datas_train.astype(np.float64))
+    datas_va = scipy.sparse.csr_matrix(datas_val.astype(np.float64))
+    datas_te = scipy.sparse.csr_matrix(datas_test.astype(np.float64))
     
     M = len(data_train1)
 

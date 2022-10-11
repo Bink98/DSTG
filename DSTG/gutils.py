@@ -39,6 +39,8 @@ def Embed(data_use1, data_use2, features, count_names, num_cc):
                                 left_index=True,
                                 right_index=True,
                                 how='inner')
+    tmp_df = pd.DataFrame(np.zeros((len(np.setdiff1d(count_names,combined_data.index.values)),combined_data.shape[1])),index=np.setdiff1d(count_names,combined_data.index.values), columns=combined_data.columns)
+    combined_data = pd.concat([combined_data,tmp_df],axis=0)
     new_data1 = combined_data.loc[count_names, ].dropna()
     # loadings=loadingDim(new.data1,cell.embeddings)
     loadings = pd.DataFrame(np.matmul(np.matrix(new_data1), cell_embeddings))
@@ -114,6 +116,12 @@ def filterEdge(edges, neighbors, mats, features, k_filter):
     nn_spots2 = neighbors[5]
     mat1 = mats.loc[features, nn_spots1].transpose()
     mat2 = mats.loc[features, nn_spots2].transpose()
+    nozero_spots1 = mat1[mat1.sum(1) > 0].index
+    nozero_spots2 = mat2[mat2.sum(1) > 0].index
+    nn_spots1 = nn_spots1[nn_spots1.isin(nozero_spots1)]
+    nn_spots2 = nn_spots2[nn_spots2.isin(nozero_spots2)]
+    mat1 = mat1.loc[nozero_spots1]
+    mat2 = mat2.loc[nozero_spots2]
     cn_data1 = l2norm(mat1)
     cn_data2 = l2norm(mat2)
     nn = kNN(data=cn_data2.loc[nn_spots2, ],
@@ -134,7 +142,7 @@ def Link_graph(count_list,
                scale_list,
                features,
                combine,
-               k_filter=200):
+               k_filter=30):
     all_edges = []
     for row in combine:
         i = row[0]
